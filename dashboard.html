@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پنل مدیریت</title>
+    <script>
+        function searchCustomer() {
+            let input = document.getElementById("searchInput").value.toLowerCase();
+            let customers = document.getElementsByClassName("customer");
+
+            for (let i = 0; i < customers.length; i++) {
+                let name = customers[i].innerText.toLowerCase();
+                if (name.includes(input)) {
+                    customers[i].style.display = "block";
+                } else {
+                    customers[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>پنل مدیریت شرکت حمل و نقل</h1>
+
+    <h2>جستجوی مشتری</h2>
+    <input type="text" id="searchInput" onkeyup="searchCustomer()" placeholder="نام مشتری را وارد کنید">
+    <ul>
+        <li class="customer">علی رضایی - 09121234567 - کامیون</li>
+        <li class="customer">محمود احمدی - 09351234567 - تریلی</li>
+        <li class="customer">سعید کریمی - 09981234567 - وانت</li>
+    </ul>
+
+    <h2>مدیریت رانندگان</h2>
+    <input type="text" id="driverName" placeholder="نام راننده">
+    <input type="text" id="driverPhone" placeholder="شماره تلفن">
+    <input type="text" id="driverTruck" placeholder="نوع وسیله">
+    <button onclick="addDriver()">اضافه کردن راننده</button>
+    <ul id="driverList"></ul>
+
+    <h2>ثبت بارنامه</h2>
+    <form>
+        <input type="text" placeholder="شماره بارنامه">
+        <input type="text" placeholder="مقصد">
+        <input type="text" placeholder="نام راننده">
+        <input type="date">
+        <button type="submit">ثبت</button>
+    </form>
+
+    <h2>وضعیت حمل و نقل</h2>
+    <ul>
+        <li>بار ۱: در حال حمل 🚛</li>
+        <li>بار ۲: تحویل داده شد ✅</li>
+        <li>بار ۳: معطل ❌</li>
+    </ul>
+
+    <nav>
+        <a href="index.html">🏠 خروج</a> |
+        <a href="contact.html">📞 تماس با ما</a>
+    </nav>
+</body>
+</html>
