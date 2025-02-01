@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ورود به سیستم</title>
+    <script>
+        function login() {
+            let username = document.getElementById("username").value;
+            let password = document.getElementById("password").value;
+
+            if (username === "admin" && password === "6569") {
+                window.location.href = "dashboard.html"; 
+            } else {
+                alert("نام کاربری یا رمز عبور اشتباه است!");
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>ورود به سیستم مدیریت حمل و نقل</h1>
+    <input type="text" id="username" placeholder="نام کاربری"><br><br>
+    <input type="password" id="password" placeholder="رمز عبور"><br><br>
+    <button onclick="login()">ورود</button>
+</body>
+</html>
