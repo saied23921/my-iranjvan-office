@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سیستم جستجو مشتری شرکت حمل و نقل نو آوران جوان </title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+        input[type="text"] {
+            padding: 10px;
+            width: 200px;
+            margin: 10px 0;
+            font-size: 28px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        input[type="file"] {
+            margin-top: 20px;
+        }
+        #dateTime {
+            font-size: 18px;
+            margin: 20px 0;
+        }
+        #calendar {
+            margin-top: 20px;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+</head>
+<body>
+    <h2>سیستم جستجو مشتری</h2>
+
+    <!-- ساعت و تاریخ -->
+    <div id="dateTime"></div>
+
+    <!-- بارگذاری فایل اکسل -->
+    <label for="fileInput">بارگذاری فایل اکسل: </label>
+    <input type="file" id="fileInput" accept=".xlsx, .xls" onchange="loadExcelFile(event)">
+
+    <br><br>
+
+    <!-- فیلد جستجو -->
+    <label for="searchInput">جستجوی مشتری: </label>
+    <input type="text" id="searchInput" placeholder="نام یا شماره پلاک را وارد کنید">
+    <button onclick="searchData()">جستجو</button>
+
+    <table id="customerTable">
+        <thead>
+            <tr>
+                <th>ردیف</th>
+                <th>نام راننده</th>
+                <th>کد ملی</th>
+                <th>p</th>    
+                <th>شماره پلاک</th>
+                <th>p</th>
+                <th>p</th>
+                <th>موبایل</th>  
+                <th>رمز عبور</th>
+                <th>پرداخت بهمن ماه</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- ردیف‌ها از طریق اکسل بارگذاری می‌شوند -->
+        </tbody>
+    </table>
+
+    <script>
+        var customerData = [];
+
+        // بارگذاری فایل اکسل
+        function loadExcelFile(event) {
+            var file = event.target.files[0];
+            var reader = new FileReader();
+            
+            reader.onload = function(e) {
+                var data = e.target.result;
+                var workbook = XLSX.read(data, { type: 'binary' });
+                var sheetName = workbook.SheetNames[0];
+                var sheet = workbook.Sheets[sheetName];
+                customerData = XLSX.utils.sheet_to_json(sheet);
+                displayData(customerData);
+            };
+
+            reader.readAsBinaryString(file);
+        }
+
+        // نمایش داده‌های بارگذاری شده
+        function displayData(data) {
+            var tableBody = document.getElementById('customerTable').getElementsByTagName('tbody')[0];
+            tableBody.innerHTML = ''; // پاک کردن داده‌های قبلی
+
+            data.forEach(function(row) {
+                var tr = document.createElement('tr');
+                Object.values(row).forEach(function(cell) {
+                    var td = document.createElement('td');
+                    td.textContent = cell;
+                    tr.appendChild(td);
+                });
+                tableBody.appendChild(tr);
+            });
+        }
+
+        // جستجو داده‌ها
+        function searchData() {
+            var input = document.getElementById('searchInput').value.toLowerCase();
+            var table = document.getElementById('customerTable');
+            var tr = table.getElementsByTagName('tr');
+            
+            for (var i = 1; i < tr.length; i++) {
+                var td = tr[i].getElementsByTagName('td');
+                var found = false;
+                
+                for (var j = 0; j < td.length; j++) {
+                    if (td[j]) {
+                        var textValue = td[j].textContent || td[j].innerText;
+                        if (textValue.toLowerCase().indexOf(input) > -1) {
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                
+                if (found) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+
+        // نمایش تاریخ و ساعت
+        function updateDateTime() {
+            var now = new Date();
+            var hours = now.getHours();
+            var minutes = now.getMinutes();
+            var seconds = now.getSeconds();
+            var day = now.getDate();
+            var month = now.getMonth() + 1;  // ماه‌ها از صفر شروع می‌شوند
+            var year = now.getFullYear();
+
+            // نمایش ساعت به فرمت 24 ساعته
+            var time = (hours < 10 ? "0" : "") + hours + ":" + (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+            var date = (day < 10 ? "0" : "") + day + "/" + (month < 10 ? "0" : "") + month + "/" + year;
+
+            document.getElementById("dateTime").innerHTML = "تاریخ و ساعت: " + date + " - " + time;
+
+            setTimeout(updateDateTime, 1000);  // به‌روزرسانی هر یک ثانیه
+        }
+
+        // بارگذاری تقویم
+        function loadCalendar() {
+            var calendarDiv = document.getElementById("calendar");
+            var now = new Date();
+            var currentMonth = now.getMonth();
+            var currentYear = now.getFullYear();
+
+            // تابع ساده برای ساخت تقویم ماهانه
+            function generateCalendar(year, month) {
+                var firstDay = new Date(year, month).getDay();
+                var daysInMonth = new Date(year, month + 1, 0).getDate();
+
+                var calendarHTML = "<table border='1'><tr><th>شنبه</th><th>یکشنبه</th><th>دوشنبه</th><th>سه‌شنبه</th><th>چهارشنبه</th><th>پنج‌شنبه</th><th>جمعه</th></tr><tr>";
+                var dayCount = 1;
+
+                // ایجاد فضاهای خالی قبل از روز اول ماه
+                for (var i = 0; i < firstDay; i++) {
+                    calendarHTML += "<td></td>";
+                }
+
+                // پر کردن روزها
+                for (var i = firstDay; i < 7; i++) {
+                    calendarHTML += "<td>" + dayCount + "</td>";
+                    dayCount++;
+                }
+
+                calendarHTML += "</tr>";
+
+                // ادامه ردیف‌ها برای روزهای باقی‌مانده
+                while (dayCount <= daysInMonth) {
+                    calendarHTML += "<tr>";
+
+                    for (var i = 0; i < 7; i++) {
+                        if (dayCount <= daysInMonth) {
+                            calendarHTML += "<td>" + dayCount + "</td>";
+                            dayCount++;
+                        } else {
+                            calendarHTML += "<td></td>";
+                        }
+                    }
+
+                    calendarHTML += "</tr>";
+                }
+
+                calendarHTML += "</table>";
+                calendarDiv.innerHTML = calendarHTML;
+            }
+
+            generateCalendar(currentYear, currentMonth);
+        }
+
+        // بارگذاری تقویم و ساعت هنگام بارگذاری صفحه
+        window.onload = function() {
+            updateDateTime();
+            loadCalendar();
+        };
+    </script>
+</body>
+</html>
